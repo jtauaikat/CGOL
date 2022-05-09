@@ -1,12 +1,5 @@
-------------------------------------------------------------------------
-This is the project README file. Here, you should describe your project.
-Tell the reader (someone who does not know anything about this project)
-all he/she needs to know. The comments should usually include at least:
-------------------------------------------------------------------------
 
-PROJECT TITLE:
-PURPOSE OF PROJECT:
-VERSION or DATE:
-HOW TO START THIS PROJECT:
-AUTHORS:
-USER INSTRUCTIONS:
+PROJECT TITLE: Conway's Game Of Life
+PURPOSE OF PROJECT: CSC223 class project
+VERSION or DATE: Created 09/05/22
+AUTHORS: Joshua Toumu'a

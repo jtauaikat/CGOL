@@ -17,8 +17,19 @@ public class MainGame
         
     }
     
-    boolean gameRules()
+    void gameRules()
     {
-        if()
+        int verticalMod = -1;
+        int horizontalMod = -1;
+        int totalNeighbors = 0;
+        for(int vertical = 0; vertical<3;vertical++){
+            for(int horizontal = 0; vertical<3; vertical++){
+                if(board[horizontal+horizontalMod][vertical+verticalMod] == 0 
+                ){
+                totalNeighbors += board[horizontal+horizontalMod][vertical+verticalMod];
+                
+                }
+            }
+        }
     }
 }

@@ -2,8 +2,6 @@
 comment0.target=MainGame
 comment1.params=
 comment1.target=MainGame()
-comment2.params=xIn\ yIn
-comment2.target=void\ gameRules(int,\ int)
-comment3.params=
-comment3.target=void\ arrayClone()
-numComments=4
+comment2.params=
+comment2.target=void\ gameRules()
+numComments=3

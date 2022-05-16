@@ -7,94 +7,96 @@
  */
 import java.util.Random;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 public class MainGame
 {
     Random rand = new Random();
-    
+
     public int SIZE = 20;
-    public int temp[][] = new int[SIZE][SIZE];
-    //public int board[][] = new int[SIZE][SIZE];
+
     public int board[][] = 
-        {{0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
+           {{0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
             {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-            {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0}};
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+            {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
     public int generations = 5;
-    public int totalNeighbors = 0;
+    public int[][]temp = new int[SIZE][SIZE];
     public int toggle=0;
+    int y = 0;
+    int x = 0;
     public MainGame()
     {
         System.out.print('\u000c');
-        //for(int y = 0; y<SIZE; y++){
-        //  for(int x = 0; x<SIZE; x++){
-        //      board[y][x] = (rand.nextInt(2))*(rand.nextInt(2));
-        //  }
-        //}
-        System.out.println("------------------------------------");
+
+        //System.out.println("---------------------------------------");
         while(toggle<5){
-            for(int y = 0; y<SIZE; y++){
-                for(int x = 0; x<SIZE; x++){
-                    gameRules(x, y);
+            System.out.print('\u000c');
+            temp = new int[SIZE][SIZE];
+            for(y = 0; y<SIZE; y++){
+                for(x = 0; x<SIZE; x++){
+                    gameRules();
                     System.out.print(board[y][x] + " ");
                 }
                 System.out.println();
             }
-            arrayClone();
-            System.out.println("------------------------------------");
+            board = temp;
+            //System.out.println("---------------------------------------");
             toggle++;
+            try{
+                TimeUnit.SECONDS.sleep(1);
+            }catch(Exception e){
+
+            }
+            
         }
     }
 
-    void gameRules(int xIn,int yIn)
+    void gameRules()
     {
+        int totalNeighbors = 0;
         for(int yMod = -1; yMod<2;yMod++){
+
+            
             for(int xMod = -1; xMod<2; xMod++ ){
-                if(xMod+yMod != 0 &&  xIn+xMod >= 0 && yIn+yMod >= 0 && xIn+xMod < SIZE && yIn+yMod < SIZE){
-                    totalNeighbors += board[yIn+yMod][xIn+xMod];
+                if( x+xMod >= 0 
+                && y+yMod >= 0 && x+xMod < SIZE && y+yMod < SIZE){
+                    totalNeighbors += board[y+yMod][x+xMod];
                 }
             }
         }
-        if(board[yIn][xIn] == 1){
+        totalNeighbors -= board[y][x];
+        if(board[y][x] == 1){
             if(totalNeighbors<2){
-                temp[yIn][xIn] = 0;
+                temp[y][x] = 0;
             }
-            else if(totalNeighbors>=2 && totalNeighbors<=3){
-                temp[yIn][xIn] = 1;
+            if(totalNeighbors>=2 && totalNeighbors<=3){
+                temp[y][x] = 1;
             }
             if(totalNeighbors>3){
-                temp[yIn][xIn] = 0;
+                temp[y][x] = 0;
             }
-        }else if(board[yIn][xIn] == 0){
+        }else if(board[y][x] == 0){
             if(totalNeighbors == 3){
-                temp[yIn][xIn] = 1;
-            }else{
-                temp[yIn][xIn] = 0;
+                temp[y][x] = 1;
             }
-        }
-    }
-
-    void arrayClone()
-    {
-        for(int yClone = 0; yClone<SIZE; yClone++){
-            for(int xClone = 0; xClone<SIZE; xClone++){
-                board[yClone][xClone] = temp[yClone][xClone];
-            }
+        }else{
+            temp[y][x] = board[y][x];
         }
     }
 }

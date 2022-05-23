@@ -2,6 +2,6 @@
 comment0.target=MainGame
 comment1.params=
 comment1.target=MainGame()
-comment2.params=
-comment2.target=void\ gameRules()
+comment2.params=board\ temp
+comment2.target=void\ gameRules(int[][],\ int[][])
 numComments=3

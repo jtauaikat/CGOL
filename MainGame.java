@@ -9,11 +9,14 @@ import java.util.Random;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.Scanner;
+import java.io.File;
+import java.io.IOException;
+
 public class MainGame
 {
     Random rand = new Random();
 
-    public int size = 20;
+    int size = 20;
 
     // public int board[][] = 
     // {{0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -36,55 +39,40 @@ public class MainGame
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-    public int generationMax = 5;
-
+    int generationMax = 5;
     int generationCount = 0;
     int y = 0;
     int x = 0;
-    public String livingCell = "J";
-    public String deadCell = " ";
+    String livingCell = "J";
+    String deadCell = " ";
     int timeDelay = 1000;
+    boolean importSeed =false;
+    File CGOLSeed = new File("CGOLSeed.txt");
+    Scanner keyboard = new Scanner(System.in);
+    
     public MainGame()
     {
         System.out.print('\u000c');
-        Scanner keyboard = new Scanner(System.in);
-
-        System.out.println("How big do you want the grid?(max 2147483647)");
-        size = keyboard.nextInt();
-        
-        keyboard.nextLine();
-
-        System.out.println("How many generations?(max 2147483647)");
-        generationMax = keyboard.nextInt();
-        keyboard.nextLine();
-
-        System.out.println("How many milliseconds between each generation?(max 2147483647)");
-        timeDelay = keyboard.nextInt();
-        keyboard.nextLine();
-
-        System.out.println("What character for living cells?");
-        livingCell = keyboard.nextLine();
-
-        System.out.println("What character for dead cells?");
-        deadCell = keyboard.nextLine();
+        userInput();
         
         int[][]board = new int[size][size];
         int[][]temp = new int[size][size];
-
-        for(int randomY = 0; randomY<size; randomY++){
-            for(int randomX = 0; randomX<size; randomX++){
-                board[randomY][randomX] = (rand.nextInt(2))*(rand.nextInt(2));
-            }
-        }
-
-        //System.out.println("---------------------------------------");
         
+        randomPopulate(board);
+        
+        int keyInputCounter = 0;
         while(generationCount<generationMax){
-            System.out.print('\u000c');
             temp = new int[size][size];
+            if(generationCount==generationMax-1){
+                System.out.println("How many generations?(max 2147483647)");
+                generationMax = keyboard.nextInt();
+                generationCount = 0;
+            }else{
+                System.out.print('\u000c');
+            }
             for(y = 0; y<size; y++){
                 for(x = 0; x<size; x++){
-                    gameRules(board, temp);
+                    checkNeighbors(board, temp);
                     if(board[y][x] == 1){
                         System.out.print(livingCell+" ");
                     }else{
@@ -94,27 +82,67 @@ public class MainGame
                 }
                 System.out.println();
             }
-
             board = temp;
-            //System.out.println("---------------------------------------");
-            
             try{
                 TimeUnit.MILLISECONDS.sleep(timeDelay);
             }catch(Exception e){
 
             }
-            String midGame = keyboard.nextLine();
-            if(midGame.equals("end")){
-                System.out.print('\u000c');
-                return;
-            }
-           
             generationCount++;
-
         }
     }
+    
+    void randomPopulate(int[][] board){
+        for(int randomY = 0; randomY<size; randomY++){
+            for(int randomX = 0; randomX<size; randomX++){
+                board[randomY][randomX] = (rand.nextInt(2))*(rand.nextInt(2));
+            }
+        }
+    }
+    
+    void userInput()
+    {
+        String[] menuText = {"Do you want to import from CGOLSeed.txt? (max 20x20 grid)","How big do you want the grid?(max 2147483647)","How many generations?(max 2147483647)","How many milliseconds between each generation?(max 2147483647)",
+        "What character for living cells?", "What character for dead cells?"};
+        for(int menuCount = 0; menuCount<6; menuCount++){
+            System.out.println(menuText[menuCount]);
+            String stringInput = keyboard.nextLine();
+            switch(menuCount){
+                case 0:
+                    
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                default:
+                    throw new RuntimeException();
+                
+            }
+        }
+        
+        
+        size = keyboard.nextInt();
+        
+        keyboard.nextLine();
 
-    void gameRules(int[][] board, int[][] temp)
+        generationMax = keyboard.nextInt();
+        generationCount = 0;
+
+        timeDelay = keyboard.nextInt();
+        keyboard.nextLine();
+
+        livingCell = keyboard.nextLine();
+
+        deadCell = keyboard.nextLine();
+    }
+    
+    int removeChar(String stringInput){
+        String numberOnly = stringInput.replaceAll("[^0-9]","");
+        int numberValue = Integer.parseInt(numberOnly);
+        return 1;
+    }
+
+    void checkNeighbors(int[][] board, int[][] temp)
     {
         int totalNeighbors = 0;
         for(int yMod = -1; yMod<2;yMod++){
@@ -124,6 +152,10 @@ public class MainGame
                 }
             }
         }
+        applyRules(board, totalNeighbors, temp);
+    }
+    
+    void applyRules(int[][] board, int totalNeighbors, int[][] temp){
         totalNeighbors -= board[y][x];
         if(board[y][x] == 1){
             if(totalNeighbors<2){

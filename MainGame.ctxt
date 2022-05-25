@@ -2,14 +2,6 @@
 comment0.target=MainGame
 comment1.params=
 comment1.target=MainGame()
-comment2.params=
-comment2.target=void\ randomPopulate()
-comment3.params=menuCount
-comment3.target=void\ userInput(int)
-comment4.params=stringInput
-comment4.target=int\ removeChar(java.lang.String)
-comment5.params=
-comment5.target=void\ checkNeighbors()
-comment6.params=totalNeighbors
-comment6.target=void\ applyRules(int)
-numComments=7
+comment2.params=board\ temp
+comment2.target=void\ gameRules(int[][],\ int[][])
+numComments=3

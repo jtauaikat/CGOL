@@ -49,17 +49,39 @@ public class MainGame
     boolean importSeed =false;
     File CGOLSeed = new File("CGOLSeed.txt");
     Scanner keyboard = new Scanner(System.in);
+
+    int[][]board = new int[size][size];
+    int[][]temp = new int[size][size];
     
+    int menuCount = 0;
+
     public MainGame()
     {
         System.out.print('\u000c');
-        userInput();
+            String[] menuText = {"Do you want to import from CGOLSeed.txt? (max 20x20 grid)","How big do you want the grid?(max 2147483647)","How many generations?(max 2147483647)","How many milliseconds between each generation?(max 2147483647)",
+                "What character for living cells?", "What character for dead cells?"};
+                
+            System.out.println(menuText[1]);
+            size = keyboard.nextInt();
+
+           
+           System.out.println(menuText[2]);
+           generationMax = keyboard.nextInt();
+           generationCount = 0;
+           
+           System.out.println(menuText[3]);
+           timeDelay = keyboard.nextInt();
+           
+           keyboard.nextLine();
+           System.out.println(menuText[4]);
+           livingCell = keyboard.nextLine();
+           
+           keyboard.nextLine();
+           System.out.println(menuText[5]);
+           deadCell = keyboard.nextLine();
         
-        int[][]board = new int[size][size];
-        int[][]temp = new int[size][size];
-        
-        randomPopulate(board);
-        
+           randomPopulate();
+           
         int keyInputCounter = 0;
         while(generationCount<generationMax){
             temp = new int[size][size];
@@ -72,7 +94,7 @@ public class MainGame
             }
             for(y = 0; y<size; y++){
                 for(x = 0; x<size; x++){
-                    checkNeighbors(board, temp);
+                    checkNeighbors();
                     if(board[y][x] == 1){
                         System.out.print(livingCell+" ");
                     }else{
@@ -91,58 +113,94 @@ public class MainGame
             generationCount++;
         }
     }
-    
-    void randomPopulate(int[][] board){
+
+    void randomPopulate(){
         for(int randomY = 0; randomY<size; randomY++){
             for(int randomX = 0; randomX<size; randomX++){
                 board[randomY][randomX] = (rand.nextInt(2))*(rand.nextInt(2));
             }
         }
     }
-    
-    void userInput()
+
+    void userInput( int menuCount)
     {
         String[] menuText = {"Do you want to import from CGOLSeed.txt? (max 20x20 grid)","How big do you want the grid?(max 2147483647)","How many generations?(max 2147483647)","How many milliseconds between each generation?(max 2147483647)",
-        "What character for living cells?", "What character for dead cells?"};
-        for(int menuCount = 0; menuCount<6; menuCount++){
+                "What character for living cells?", "What character for dead cells?"};
+        boolean randomPopulateToggle = false;
+            System.out.print('\u000c');
             System.out.println(menuText[menuCount]);
             String stringInput = keyboard.nextLine();
             switch(menuCount){
                 case 0:
-                    
+                if(stringInput.equalsIgnoreCase("yes")){
+
+                }else if(stringInput.equalsIgnoreCase("no")){
+                    randomPopulateToggle = true;
+                    menuCount++;
+                }else{
+                    System.out.println("Invalid Input. Input \"yes\" or \"no\"");
+                }
+                return;
                 case 1:
+                if (removeChar(stringInput) > 0 && removeChar(stringInput) < 2147483647){
+                    size = removeChar(stringInput);
+                }else{
+                    size = 20;
+                }
+                if(randomPopulateToggle){
+                    randomPopulate();
+                }
+                menuCount++;
+                return;
                 case 2:
+                if (removeChar(stringInput) > 0 && removeChar(stringInput) < 2147483647){
+                    generationMax = removeChar(stringInput);
+                }else{
+                    generationMax = 20;
+                }
+                menuCount++;
+                return;
                 case 3:
+                if (removeChar(stringInput) > 0 && removeChar(stringInput) < 2147483647){
+                    timeDelay = removeChar(stringInput);
+                }else{
+                    timeDelay = 20;
+                }
+                menuCount++;
+                return;
                 case 4:
-                default:
-                    throw new RuntimeException();
-                
+                livingCell = stringInput;
+                menuCount++;
+                return;
+                case 5:
+                deadCell = stringInput;
+                menuCount++;
+                return;
             }
-        }
         
-        
-        size = keyboard.nextInt();
-        
-        keyboard.nextLine();
 
-        generationMax = keyboard.nextInt();
-        generationCount = 0;
+        // size = keyboard.nextInt();
 
-        timeDelay = keyboard.nextInt();
-        keyboard.nextLine();
+        // keyboard.nextLine();
 
-        livingCell = keyboard.nextLine();
+        // generationMax = keyboard.nextInt();
+        // generationCount = 0;
 
-        deadCell = keyboard.nextLine();
+        // timeDelay = keyboard.nextInt();
+        // keyboard.nextLine();
+
+        // livingCell = keyboard.nextLine();
+
+        // deadCell = keyboard.nextLine();
     }
-    
+
     int removeChar(String stringInput){
         String numberOnly = stringInput.replaceAll("[^0-9]","");
         int numberValue = Integer.parseInt(numberOnly);
-        return 1;
+        return numberValue;
     }
 
-    void checkNeighbors(int[][] board, int[][] temp)
+    void checkNeighbors()
     {
         int totalNeighbors = 0;
         for(int yMod = -1; yMod<2;yMod++){
@@ -152,10 +210,10 @@ public class MainGame
                 }
             }
         }
-        applyRules(board, totalNeighbors, temp);
+        applyRules(totalNeighbors);
     }
-    
-    void applyRules(int[][] board, int totalNeighbors, int[][] temp){
+
+    void applyRules(int totalNeighbors){
         totalNeighbors -= board[y][x];
         if(board[y][x] == 1){
             if(totalNeighbors<2){

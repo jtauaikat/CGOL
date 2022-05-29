@@ -44,9 +44,43 @@ public class MainGame
     public String livingCell = "J";
     public String deadCell = " ";
     int timeDelay = 1000;
+    int[][] board;
+    int[][] temp;
     public MainGame()
     {
         System.out.print('\u000c');
+        menuInput();
+        randomPopulate();
+        while(generationCount<generationMax){
+            System.out.print('\u000c');
+            temp = new int[size][size];
+            checkCells();
+            board = temp;
+            try{
+                TimeUnit.MILLISECONDS.sleep(timeDelay);
+            }catch(Exception e){
+
+            }
+            generationCount++;
+        }
+    }
+    
+    void checkCells(){
+        for(y = 0; y<size; y++){
+                for(x = 0; x<size; x++){
+                    gameRules();
+                    if(board[y][x] == 1){
+                        System.out.print(livingCell+" ");
+                    }else{
+                        System.out.print(deadCell+" ");
+                    }
+
+                }
+                System.out.println();
+            }
+    }
+
+    void menuInput(){
         Scanner keyboard = new Scanner(System.in);
 
         System.out.println("How big do you want the grid?(max 2147483647)");
@@ -68,48 +102,25 @@ public class MainGame
         System.out.println("What character for dead cells?");
         deadCell = keyboard.nextLine();
 
-        int[][]board = new int[size][size];
-        int[][]temp = new int[size][size];
-
+        board = new int[size][size];
+        temp = new int[size][size];
+    }
+    
+    void randomPopulate(){
         for(int randomY = 0; randomY<size; randomY++){
             for(int randomX = 0; randomX<size; randomX++){
                 board[randomY][randomX] = (rand.nextInt(2))*(rand.nextInt(2));
             }
         }
-
-        //System.out.println("---------------------------------------");
-
-        while(generationCount<generationMax){
-            System.out.print('\u000c');
-            temp = new int[size][size];
-            for(y = 0; y<size; y++){
-                for(x = 0; x<size; x++){
-                    gameRules(board, temp);
-                    if(board[y][x] == 1){
-                        System.out.print(livingCell+" ");
-                    }else{
-                        System.out.print(deadCell+" ");
-                    }
-
-                }
-                System.out.println();
-            }
-
-            board = temp;
-            //System.out.println("---------------------------------------");
-
-            try{
-                TimeUnit.MILLISECONDS.sleep(timeDelay);
-            }catch(Exception e){
-
-            }
-            
-            generationCount++;
-
-        }
+    }
+    
+    int removeChar(String stringInput){
+        String numberOnly = stringInput.replaceAll("[^0-9]","");
+        int numberValue = Integer.parseInt(numberOnly);
+        return numberValue;
     }
 
-    void gameRules(int[][] board, int[][] temp)
+    void gameRules()
     {
         int totalNeighbors = 0;
         for(int yMod = -1; yMod<2;yMod++){
@@ -120,6 +131,10 @@ public class MainGame
             }
         }
         totalNeighbors -= board[y][x];
+        applyRules(totalNeighbors);
+    }
+    
+    void applyRules(int totalNeighbors){
         if(board[y][x] == 1){
             if(totalNeighbors<2){
                 temp[y][x] = 0;

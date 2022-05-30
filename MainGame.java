@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.*;
 import java.util.*;
+import java.lang.Object;
 public class MainGame
 {
     Random rand = new Random();
@@ -154,18 +155,16 @@ public class MainGame
 
     void trySeedFile(){
         File seed = new File("CGOLSeed.txt");
-        Scanner fileScanner = new Scanner(seed);
-        Reader reader = new StringReader(fileScanner);
         
-        int readerInput = reader.read();
         try{
             Scanner fileReader = new Scanner(seed);
             for (int seedY = 0; seedY<size; seedY++){
+                String fileString  = fileReader.nextLine();
                 for (int seedX = 0; seedX<size; seedX++){
-                    board[seedY][seedX] = readerInput;
+                    //board[seedY][seedX] = Integer.parseInt(""+fileString.charAt(seedX));
+                    board[seedY][seedX]=fileString.charAt(seedX)-'0';
                 }
             }
-            reader.close();
         }
         catch (IOException e){
             e.printStackTrace();

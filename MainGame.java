@@ -3,7 +3,7 @@
  * Main game function for CGOL
  *
  * Joshua Toumu'a
- * 30/05/22
+ * 01/06/22
  */
 import java.util.Random;
 import java.util.Arrays;
@@ -14,12 +14,16 @@ import java.io.IOException;
 import java.io.*;
 import java.util.*;
 import java.lang.Object;
+//all imports needed
 public class MainGame
 {
     Random rand = new Random();
-
-    public int size = 20;
-
+    //establishes randomness for random board generation
+    
+    int size = 20;
+    //default size of the board is 20x20
+    
+    //testing board with preset stable and oscillator to test CGOL rules
     // public int board[][] = 
     // {{0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -41,20 +45,30 @@ public class MainGame
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-    public int generationMax = 5;
+    
+    int generationMax = 5;
 
     int generationCount = 0;
+    
+    //x and y is used to apply CGOL rules for every cell on the board
     int y = 0;
     int x = 0;
-    public String livingCell = "J";
-    public String deadCell = " ";
+    
+    //what the living and dead cells will look like on the console
+    String livingCell = "X";
+    String deadCell = " ";
+    
+    //how many milliseconds between each generation
     int timeDelay = 1000;
+    
     int[][] board;
     int[][] temp;
     public MainGame()
     {
+        //clears canvas
         System.out.print('\u000c');
 
+        //runs menu system method
         menuInput();
 
         while(generationCount<generationMax){

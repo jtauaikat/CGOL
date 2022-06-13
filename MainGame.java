@@ -19,10 +19,10 @@ public class MainGame
 {
     Random rand = new Random();
     //establishes randomness for random board generation
-    
+
     int size = 20;
     //default size of the board is 20x20
-    
+
     //testing board with preset stable and oscillator to test CGOL rules
     // public int board[][] = 
     // {{0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -45,51 +45,76 @@ public class MainGame
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
-    
+
     //creates generation counter with default of 5 if any errors occur
     int generationMax = 5;
     int generationCount = 0;
-    
+
     //x and y is used to apply CGOL rules for every cell on the board
     int y = 0;
     int x = 0;
-    
+
     //what the living and dead cells will look like on the console
     String livingCell = "X";
     String deadCell = " ";
-    
+
     //how many milliseconds between each generation
     int timeDelay = 1000;
-    
+
     //defines board and temp boards
     int[][] board;
     int[][] temp;
-    public MainGame()
-    {
+    public MainGame(){
         //clears canvas
         System.out.print('\u000c');
 
         //runs menu system method
         menuInput();
+        boolean mainLoop = true;
 
         //repeats for set amount of generations
-        while(generationCount<generationMax){
-            //clears canvas and temp board
-            System.out.print('\u000c');
-            temp = new int[size][size];
-            //runs program that applies CGOL rules to every cell on temp board
-            checkCells();
-            //applies changes to the real board
-            //this is done on a temp board in order to prevent any interference from changes from previous cells to change the states of other cells
-            board = temp;
-            //creates a delay of a set amount of milliseconds
-            try{
-                TimeUnit.MILLISECONDS.sleep(timeDelay);
-            }catch(Exception e){
+        while(mainLoop){
+            while(generationCount<generationMax){
+                //clears canvas and temp board
+                System.out.print('\u000c');
+                temp = new int[size][size];
+                //runs program that applies CGOL rules to every cell on temp board
+                checkCells();
+                //applies changes to the real board
+                //this is done on a temp board in order to prevent any interference from changes from previous cells to change the states of other cells
+                board = temp;
+                //creates a delay of a set amount of milliseconds
+                try{
+                    TimeUnit.MILLISECONDS.sleep(timeDelay);
+                }catch(Exception e){
 
+                }
+                //repeats to next generation
+                generationCount++;
             }
-            //repeats to next generation
-            generationCount++;
+            endMenu();
+        }
+    }
+
+    void endMenu(){
+        Scanner keyboard = new Scanner(System.in);
+        if(generationCount >= generationMax){
+            System.out.println("Would you like to quit, continue, or restart the simulation?");
+            String keyInput = keyboard.nextLine().toLowerCase();
+            if(keyInput.equalsIgnoreCase("quit")){
+                return;
+            }else if(keyInput.equalsIgnoreCase("continue")){
+                System.out.println("How many generations?(max 2147483647)");
+                keyInput = keyboard.nextLine();
+                generationMax = removeChar(keyInput);
+                generationCount = 0;
+            }else if(keyInput.equalsIgnoreCase("restart")){
+                generationCount = 0;
+                System.out.print('\u000c');
+                menuInput();
+            }else{
+                System.out.println("I do not understand that command. Enter \"continue\", \"quit\" or \"restart\".");
+            }
         }
     }
 
@@ -101,7 +126,7 @@ public class MainGame
             for(x = 0; x<size; x++){
                 //applies the rules of CGOL, applies changes to cells on temp board
                 gameRules();
-                
+
                 //prints out previous generation
                 if(board[y][x] == 1){
                     System.out.print(livingCell+" ");
@@ -111,7 +136,9 @@ public class MainGame
 
             }
             //creates new line
+
             System.out.println();
+
         }
     }
 
@@ -139,48 +166,68 @@ public class MainGame
             board = new int[size][size];
             temp = new int[size][size];
             //random population method
-            randomPopulate();
             
+
             //old code for trialling inputs, checks if user wants to manually edit the board
-            //System.out.println("do you want to manually edit the seed? type yes if so.");
+            System.out.println("do you want to manually edit the seed? type yes if so.");
 
-            //keyInput = keyboard.nextLine();
+            keyInput = keyboard.nextLine();
 
-            //if (keyInput.equalsIgnoreCase("yes")){
-            //    selectionScreen = true;
-            //}
-        }
-        //loop for manually editing the board
-        while (selectionScreen == true){
-            //prints out board
-            for(int yModifer= 0; yModifer<size; yModifer++){
-                for(int xModifer = 0; xModifer<size; xModifer++){
-                    System.out.print(board [yModifer] [xModifer] + "  ");
+            if (keyInput.equalsIgnoreCase("yes")){
+            for(int yModifier= 0; yModifier<size; yModifier++){
+                for(int xModifier = 0; xModifier<size; xModifier++){
+                    board[yModifier][xModifier] = 0;
+                }
+                }
+            selectionScreen = true;
+                for(int yModifier= 0; yModifier<size; yModifier++){
+                for(int xModifier = 0; xModifier<size; xModifier++){
+                    System.out.print(board[yModifier][xModifier] + "  ");
                 }
                 System.out.println();
             }
+            }else{
+                randomPopulate();
+            }
+        }
+        //loop for manually editing the board
+        while (selectionScreen == true){
             
             //allows user to input x and y coordinates for the cell you want to replace
             System.out.println("Please select row: ");
-            int rowSelection = keyboard.nextInt();
+            int rowSelection = keyboard.nextInt() -1;
             System.out.println("Please select column: ");
-            int columnSelection = keyboard.nextInt();
-            
+            int columnSelection = keyboard.nextInt() -1;
+            keyboard.nextLine();
+
             //switches cells around, if living, switch to dead and vice versa.
-            if (board[rowSelection][columnSelection] == 0){
-                board[rowSelection][columnSelection] = 1;
+            if(columnSelection >0 && columnSelection <= size && rowSelection > 0 && rowSelection <= size){
+                if (board[columnSelection][rowSelection] == 1){
+                    board[columnSelection][rowSelection] = 0;
+                }
+                else{
+                    board[rowSelection][columnSelection] = 1;
+                }
+            }else{
+                System.out.println("Invalid Cell.");
             }
-            else{
-                board[rowSelection][columnSelection] = 0;
+            //prints out board
+            for(int yModifier= 0; yModifier<size; yModifier++){
+                for(int xModifier = 0; xModifier<size; xModifier++){
+                    System.out.print(board[yModifier][xModifier] + "  ");
+                }
+                System.out.println();
             }
 
             System.out.println();
 
-            System.out.println("Please select column: ");
-            String endLoop = keyboard.nextLine();
-            if(endLoop.equals("yes")){
+            System.out.println("would you like to stop editing cells?");
+            
+            keyInput = keyboard.nextLine();
+            if(keyInput.equals("yes")){
                 selectionScreen=false;
             }
+       
         }
 
         System.out.println("How many generations?(max 2147483647)");
@@ -203,7 +250,7 @@ public class MainGame
     void trySeedFile(){
         //defines file
         File seed = new File("CGOLSeed.txt");
-        
+
         try{
             //creates scanner
             Scanner fileReader = new Scanner(seed);
@@ -213,7 +260,7 @@ public class MainGame
                 String fileString  = fileReader.nextLine();
                 for (int seedX = 0; seedX<size; seedX++){
                     //board[seedY][seedX] = Integer.parseInt(""+fileString.charAt(seedX));
-                    
+
                     //takes the unicode character for "0" and subtracts the numerical value of the cell selected. if subtracted from itself, it gives 0, and if subtracted from "1", gives 1.
                     board[seedY][seedX]=fileString.charAt(seedX)-'0';
                 }

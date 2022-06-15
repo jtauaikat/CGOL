@@ -3,7 +3,7 @@
  * Main game function for CGOL
  *
  * Joshua Toumu'a
- * 13/06/22
+ * 15/06/22
  */
 import java.util.Random;
 import java.util.Arrays;
@@ -166,7 +166,6 @@ public class MainGame
             board = new int[size][size];
             temp = new int[size][size];
             //random population method
-            
 
             //old code for trialling inputs, checks if user wants to manually edit the board
             System.out.println("do you want to manually edit the seed? type yes if so.");
@@ -174,34 +173,40 @@ public class MainGame
             keyInput = keyboard.nextLine();
 
             if (keyInput.equalsIgnoreCase("yes")){
-            for(int yModifier= 0; yModifier<size; yModifier++){
-                for(int xModifier = 0; xModifier<size; xModifier++){
-                    board[yModifier][xModifier] = 0;
-                }
-                }
-            selectionScreen = true;
                 for(int yModifier= 0; yModifier<size; yModifier++){
-                for(int xModifier = 0; xModifier<size; xModifier++){
-                    System.out.print(board[yModifier][xModifier] + "  ");
+                    for(int xModifier = 0; xModifier<size; xModifier++){
+                        board[yModifier][xModifier] = 0;
+                    }
                 }
-                System.out.println();
-            }
+                selectionScreen = true;
+                //System.out.print("\t");
+                //for(int xModifier = 0; xModifier<size; xModifier++){
+                  //  System.out.print((xModifier+1)+" ");
+                //}
+                //System.out.println();
+                for(int yModifier= 0; yModifier<size; yModifier++){
+                    System.out.print((yModifier+1)+"\t");
+                    for(int xModifier = 0; xModifier<size; xModifier++){
+                        System.out.print(board[yModifier][xModifier] + " ");
+                    }
+                    System.out.println();
+                }
             }else{
                 randomPopulate();
             }
         }
         //loop for manually editing the board
         while (selectionScreen == true){
-            
+
             //allows user to input x and y coordinates for the cell you want to replace
-            System.out.println("Please select row: ");
-            int rowSelection = keyboard.nextInt() -1;
             System.out.println("Please select column: ");
-            int columnSelection = keyboard.nextInt() -1;
-            keyboard.nextLine();
+            int columnSelection = removeChar(keyboard.nextLine())-1;
+            System.out.println("Please select row: ");
+            int rowSelection = removeChar(keyboard.nextLine())-1;
+            //keyboard.nextLine();
 
             //switches cells around, if living, switch to dead and vice versa.
-            if(columnSelection >0 && columnSelection <= size && rowSelection > 0 && rowSelection <= size){
+            if(columnSelection >=0 && columnSelection < size && rowSelection >= 0 && rowSelection < size){
                 if (board[columnSelection][rowSelection] == 1){
                     board[columnSelection][rowSelection] = 0;
                 }
@@ -213,8 +218,9 @@ public class MainGame
             }
             //prints out board
             for(int yModifier= 0; yModifier<size; yModifier++){
+                System.out.print((yModifier+1)+"\t");
                 for(int xModifier = 0; xModifier<size; xModifier++){
-                    System.out.print(board[yModifier][xModifier] + "  ");
+                    System.out.print(board[yModifier][xModifier] + " ");
                 }
                 System.out.println();
             }
@@ -222,12 +228,12 @@ public class MainGame
             System.out.println();
 
             System.out.println("would you like to stop editing cells?");
-            
+
             keyInput = keyboard.nextLine();
             if(keyInput.equals("yes")){
                 selectionScreen=false;
             }
-       
+
         }
 
         System.out.println("How many generations?(max 2147483647)");

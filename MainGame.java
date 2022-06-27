@@ -3,7 +3,7 @@
  * Main game function for CGOL
  *
  * Joshua Toumu'a
- * 15/06/22
+ * 27/06/22
  */
 import java.util.Random;
 import java.util.Arrays;
@@ -201,19 +201,19 @@ public class MainGame
         while (selectionScreen == true){
 
             //allows user to input x and y coordinates for the cell you want to replace
-            System.out.println("Please select column: ");
-            int columnSelection = removeChar(keyboard.nextLine())-1;
             System.out.println("Please select row: ");
             int rowSelection = removeChar(keyboard.nextLine())-1;
+            System.out.println("Please select column: ");
+            int columnSelection = removeChar(keyboard.nextLine())-1;
             //keyboard.nextLine();
 
             //switches cells around, if living, switch to dead and vice versa.
             if(columnSelection >=0 && columnSelection < size && rowSelection >= 0 && rowSelection < size){
-                if (board[columnSelection][rowSelection] == 1){
-                    board[columnSelection][rowSelection] = 0;
+                if (board[rowSelection][columnSelection] == 1){
+                    board[rowSelection][columnSelection] = 0;
                 }
                 else{
-                    board[columnSelection][rowSelection] = 1;
+                    board[rowSelection][columnSelection] = 1;
                 }
             }else{
                 System.out.println("Invalid Cell.");

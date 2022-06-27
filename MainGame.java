@@ -25,26 +25,26 @@ public class MainGame
 
     //testing board with preset stable and oscillator to test CGOL rules
     // public int board[][] = 
-    // {{0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0},
+    // {{1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
+    // {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
     // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}};
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
+    // {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
+    // {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0}};
 
     //creates generation counter with default of 5 if any errors occur
     int generationMax = 5;
@@ -64,13 +64,14 @@ public class MainGame
     //defines board and temp boards
     int[][] board;
     int[][] temp;
+    boolean mainLoop = true;
     public MainGame(){
         //clears canvas
         System.out.print('\u000c');
 
         //runs menu system method
         menuInput();
-        boolean mainLoop = true;
+        
 
         //repeats for set amount of generations
         while(mainLoop){
@@ -102,6 +103,7 @@ public class MainGame
             System.out.println("Would you like to quit, continue, or restart the simulation?");
             String keyInput = keyboard.nextLine().toLowerCase();
             if(keyInput.equalsIgnoreCase("quit")){
+                mainLoop = false;
                 return;
             }else if(keyInput.equalsIgnoreCase("continue")){
                 System.out.println("How many generations?(max 2147483647)");
@@ -211,7 +213,7 @@ public class MainGame
                     board[columnSelection][rowSelection] = 0;
                 }
                 else{
-                    board[rowSelection][columnSelection] = 1;
+                    board[columnSelection][rowSelection] = 1;
                 }
             }else{
                 System.out.println("Invalid Cell.");
@@ -290,14 +292,18 @@ public class MainGame
     int removeChar(String stringInput){
         //removes all values that aren't between 0-9
         String numberOnly = stringInput.replaceAll("[^0-9]","");
-        int numberValue = Integer.parseInt(numberOnly);
-        if(numberValue <= 0){
+        if(numberOnly.equals("")){
             //if value is invalid/lesser than 0, returns safe number of 20
+            System.out.println("Invalid input. setting to default of 20.");
             return 20;
-        }else{
-            //returns value without characters
-            return numberValue;
         }
+        int numberValue = Integer.parseInt(numberOnly);
+        if(numberValue == 0){
+            System.out.println("0 is not an acceptable integer. Returning 20.");
+            return 20;
+        }
+        System.out.println(numberValue);
+        return numberValue;
     }
 
     //method that checks every cell surrounding a cell, adds them to a total.

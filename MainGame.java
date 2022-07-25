@@ -3,7 +3,7 @@
  * Main game function for CGOL
  *
  * Joshua Toumu'a
- * 04/07/22
+ * 26/07/22
  */
 import java.util.Random;
 import java.util.Arrays;
@@ -17,12 +17,6 @@ import java.lang.Object;
 //all imports needed
 public class MainGame
 {
-    Random rand = new Random();
-    //establishes randomness for random board generation
-
-    int size = 20;
-    //default size of the board is 20x20
-
     //testing board with preset stable and oscillator to test CGOL rules
     // public int board[][] = 
     // {{1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
@@ -49,29 +43,35 @@ public class MainGame
     //creates generation counter with default of 5 if any errors occur
     int generationMax = 5;
     int generationCount = 0;
-
     //x and y is used to apply CGOL rules for every cell on the board
     int y = 0;
     int x = 0;
-
     //what the living and dead cells will look like on the console
     String livingCell = "█";
     String deadCell = "░";
-
     //how many milliseconds between each generation
     int timeDelay = 1000;
-
     //defines board and temp boards
     int[][] board;
     int[][] temp;
     boolean mainLoop = true;
+    //establishes randomness for random board generation
+    Random rand = new Random();
+    //default size of the board is 20x20
+    int size = 0;
+    //
+    Scanner keyboard = new Scanner(System.in);
+    String keyInput;
+    
+    //
+    boolean boardPopulateLoop = true;
+    boolean selectionScreen = false;
+    
     public MainGame(){
         //clears canvas
         System.out.print('\u000c');
-
         //runs menu system method
         menuInput();
-
         //repeats for set amount of generations
         while(mainLoop){
             while(generationCount<generationMax){
@@ -95,9 +95,109 @@ public class MainGame
             endMenu();
         }
     }
+    
+    //method for menu input code
+    void menuInput(){
+        System.out.println("Would you like to load a 𝐬𝐞𝐞𝐝, 𝐫𝐚𝐧𝐝𝐨𝐦 board or 𝐞𝐝𝐢𝐭 manually?");
+        boardPopulateLoop = true;
+        while(boardPopulateLoop){
+            keyInput = keyboard.nextLine().toLowerCase();
+            switch(keyInput){
+                case "seed":
+                //runs txt file loader
+                trySeedFile();
+                boardPopulateLoop = false;
+                seedPopulate();
+                break;
+
+                case "random":
+                //if user inputs anything else, runs random input code, allows user customization
+                System.out.println("How big do you want the grid?");
+                keyInput = keyboard.nextLine().toLowerCase();
+                size = removeChar(keyInput);
+                board = new int[size][size];
+                temp = new int[size][size];
+                randomPopulate();
+                boardPopulateLoop = false;
+                break;
+
+                case "edit":
+                //if user inputs anything else, runs random input code, allows user customization
+                System.out.println("How big do you want the grid?");
+                keyInput = keyboard.nextLine().toLowerCase();
+                size = removeChar(keyInput);
+                board = new int[size][size];
+                temp = new int[size][size];
+                manualPopulate();
+                boardPopulateLoop = false;
+                selectionScreen = true;
+                manualEdit();
+                break;
+
+                default:
+                //spits out invalid input code
+                System.out.println("invalid command. please enter \'seed\', \'random\' or \'edit\'.");
+                break;
+            }
+        }
+        //loop for manually editing the board
+        System.out.println("How many generations?");
+        keyInput = keyboard.nextLine();
+        generationMax = removeChar(keyInput);
+
+        System.out.println("How many milliseconds between each generation?");
+        keyInput = keyboard.nextLine();
+        timeDelay = removeChar(keyInput);
+        
+        System.out.println("Would you like to use custom characters?");
+        keyInput = keyboard.nextLine().toLowerCase();
+        
+        if(keyInput.equals("yes")){
+            System.out.println("What character for living cells?");
+            livingCell = keyboard.nextLine();
+
+            System.out.println("What character for dead cells?");
+            deadCell = keyboard.nextLine();
+        }
+    }
+    
+    void manualEdit(){
+        while (selectionScreen == true){
+            //allows user to input x and y coordinates for the cell you want to replace
+            System.out.println("Please select row: ");
+            int rowSelection = removeChar(keyboard.nextLine())-1;
+            System.out.println("Please select column: ");
+            int columnSelection = removeChar(keyboard.nextLine())-1;
+            
+            //switches cells around, if living, switch to dead and vice versa.
+            if(columnSelection >=0 && columnSelection < size && rowSelection >= 0 && rowSelection < size){
+                if (board[rowSelection][columnSelection] == 1){
+                    board[rowSelection][columnSelection] = 0;
+                }else{
+                    board[rowSelection][columnSelection] = 1;
+                }
+            }else{
+                System.out.println("Invalid Cell.");
+            }
+            //prints out board
+            for(int yModifier= 0; yModifier<size; yModifier++){
+                System.out.print((yModifier+1)+"\t");
+                for(int xModifier = 0; xModifier<size; xModifier++){
+                    System.out.print(board[yModifier][xModifier] + " ");
+                }
+                System.out.println();
+            }
+            System.out.println();
+            System.out.println("would you like to stop editing cells?");
+
+            keyInput = keyboard.nextLine();
+            if(keyInput.equals("yes")){
+                selectionScreen=false;
+            }
+        }
+    }
 
     void endMenu(){
-        Scanner keyboard = new Scanner(System.in);
         if(generationCount >= generationMax){
             System.out.println("Would you like to quit, continue, or restart the simulation?");
             String keyInput = keyboard.nextLine().toLowerCase();
@@ -118,8 +218,8 @@ public class MainGame
             }
         }
     }
-
     //method that applies the game rules to every cell
+    
     void checkCells(){
         //goes along y axis, checks all cells
         for(y = 0; y<size; y++){
@@ -142,134 +242,6 @@ public class MainGame
 
         }
     }
-
-    //method for menu input code
-    void menuInput(){
-        //sets up the keyboard scanner
-        Scanner keyboard = new Scanner(System.in);
-        String keyInput;
-        boolean selectionScreen = false;
-
-        System.out.println("Would you like to load a 𝐬𝐞𝐞𝐝, 𝐫𝐚𝐧𝐝𝐨𝐦 board or 𝐞𝐝𝐢𝐭 manually?");
-        boolean boardPopulateLoop = true;
-        while(boardPopulateLoop){
-            keyInput = keyboard.nextLine().toLowerCase();
-            switch(keyInput){
-                case "seed":
-                //if user inputs yes, sets board size as 20
-                board = new int[20][20];
-                temp = new int[20][20];
-                //runs txt file loader
-                trySeedFile();
-                boardPopulateLoop = false;
-                for(int yModifier= 0; yModifier<size; yModifier++){
-                    for(int xModifier = 0; xModifier<size; xModifier++){
-                        System.out.print(board[yModifier][xModifier] + " ");
-                    }
-                    System.out.println();
-                }
-                break;
-
-                case "random":
-                //if user inputs anything else, runs random input code, allows user customization
-                System.out.println("How big do you want the grid?");
-                keyInput = keyboard.nextLine().toLowerCase();
-                size = removeChar(keyInput);
-                board = new int[size][size];
-                temp = new int[size][size];
-                
-                randomPopulate();
-                boardPopulateLoop = false;
-                break;
-
-                case "edit":
-                //if user inputs anything else, runs random input code, allows user customization
-                System.out.println("How big do you want the grid?");
-                keyInput = keyboard.nextLine().toLowerCase();
-                size = removeChar(keyInput);
-                board = new int[size][size];
-                temp = new int[size][size];
-                
-                for(int yModifier= 0; yModifier<size; yModifier++){
-                    for(int xModifier = 0; xModifier<size; xModifier++){
-                        board[yModifier][xModifier] = 0;
-                    }
-                }
-                for(int yModifier= 0; yModifier<size; yModifier++){
-                    System.out.print((yModifier+1)+"\t");
-                    for(int xModifier = 0; xModifier<size; xModifier++){
-                        System.out.print(board[yModifier][xModifier] + " ");
-                    }
-                    System.out.println();
-                }
-                boardPopulateLoop = false;
-                selectionScreen = true;
-                break;
-
-                default:
-                System.out.println("invalid command. please enter \'seed\', \'random\' or \'edit\'.");
-                break;
-
-            }
-        }
-        //loop for manually editing the board
-        while (selectionScreen == true){
-
-            //allows user to input x and y coordinates for the cell you want to replace
-            System.out.println("Please select row: ");
-            int rowSelection = removeChar(keyboard.nextLine())-1;
-            System.out.println("Please select column: ");
-            int columnSelection = removeChar(keyboard.nextLine())-1;
-            
-            //switches cells around, if living, switch to dead and vice versa.
-            if(columnSelection >=0 && columnSelection < size && rowSelection >= 0 && rowSelection < size){
-                if (board[rowSelection][columnSelection] == 1){
-                    board[rowSelection][columnSelection] = 0;
-                }
-                else{
-                    board[rowSelection][columnSelection] = 1;
-                }
-            }else{
-                System.out.println("Invalid Cell.");
-            }
-            //prints out board
-            for(int yModifier= 0; yModifier<size; yModifier++){
-                System.out.print((yModifier+1)+"\t");
-                for(int xModifier = 0; xModifier<size; xModifier++){
-                    System.out.print(board[yModifier][xModifier] + " ");
-                }
-                System.out.println();
-            }
-            System.out.println();
-            System.out.println("would you like to stop editing cells?");
-
-            keyInput = keyboard.nextLine();
-            if(keyInput.equals("yes")){
-                selectionScreen=false;
-            }
-        }
-
-        System.out.println("How many generations?");
-        keyInput = keyboard.nextLine();
-        generationMax = removeChar(keyInput);
-
-        System.out.println("How many milliseconds between each generation?");
-        keyInput = keyboard.nextLine();
-        timeDelay = removeChar(keyInput);
-        
-        System.out.println("Woult you like to use custom characters?");
-        keyInput = keyboard.nextLine().toLowerCase();
-        
-        if(keyInput.equals("yes")){
-            System.out.println("What character for living cells?");
-            livingCell = keyboard.nextLine();
-
-            System.out.println("What character for dead cells?");
-            deadCell = keyboard.nextLine();
-        }
-
-    }
-
     //method for loading in .txt file
     void trySeedFile(){
         //defines file
@@ -278,8 +250,11 @@ public class MainGame
             //creates scanner
             Scanner fileReader = new Scanner(seed);
             //code that takes the 20x20 grid in character by character and places into array
-            for (int seedY = 0; seedY<size; seedY++){
-                //reads next line
+            boolean firstLineLoop = true;
+            
+            board = new int[size][size];
+            temp = new int[size][size];
+            for (int seedY = 0; seedY<size-1; seedY++){
                 String fileString  = fileReader.nextLine();
                 for (int seedX = 0; seedX<size; seedX++){
                     //board[seedY][seedX] = Integer.parseInt(""+fileString.charAt(seedX));
@@ -287,13 +262,14 @@ public class MainGame
                     //takes the unicode character for "0" and subtracts the numerical value of the cell selected. if subtracted from itself, it gives 0, and if subtracted from "1", gives 1.
                     board[seedY][seedX]=fileString.charAt(seedX)-'0';
                 }
+                //reads next line
+                
             }
         }
         catch (IOException e){
             e.printStackTrace();
         }
     }
-
     //method that gives each cell a random value between 0 and 1
     void randomPopulate(){
         for(int randomY = 0; randomY<size; randomY++){
@@ -302,7 +278,28 @@ public class MainGame
             }
         }
     }
-
+    void seedPopulate(){
+        for(int yModifier= 0; yModifier<size; yModifier++){
+                    for(int xModifier = 0; xModifier<size; xModifier++){
+                        System.out.print(board[yModifier][xModifier] + " ");
+                    }
+                    System.out.println();
+                }
+    }
+    void manualPopulate(){
+        for(int yModifier= 0; yModifier<size; yModifier++){
+            for(int xModifier = 0; xModifier<size; xModifier++){
+                board[yModifier][xModifier] = 0;
+            }
+        }
+        for(int yModifier= 0; yModifier<size; yModifier++){
+            System.out.print((yModifier+1)+"\t");
+            for(int xModifier = 0; xModifier<size; xModifier++){
+                System.out.print(board[yModifier][xModifier] + " ");
+            }
+            System.out.println();
+        }
+    }
     //method that ensures code will not crash if user accidentally inputs a value that is not a number
     int removeChar(String stringInput){
         //removes all values that aren't between 0-9
@@ -312,7 +309,6 @@ public class MainGame
             System.out.println("Invalid input. setting to default of 20.");
             return 20;
         }
-        
         int numberValue = Integer.parseInt(numberOnly);
         if(numberValue == 0 || numberValue >= 2147483647){
             System.out.println("not an acceptable integer. Returning 20.");
@@ -320,7 +316,6 @@ public class MainGame
         }
         return numberValue;
     }
-
     //method that checks every cell surrounding a cell, adds them to a total.
     void gameRules(){
         int totalNeighbors = 0;
@@ -340,28 +335,28 @@ public class MainGame
 
     void applyRules(int totalNeighbors){
         //method takes the totalNeighbors values and uses them to decide if cell is living or dead.
-        //if cell is alive
+        
+        //if cell is alive and there is <2 neighbours, the cell dies of underpopulation
+        //if cell is alive and between 2-3 neighbours, the cell lives on to the next generation
+        //if cell is alive and there is >3 neighbours, the cell dies of overpopulation
+        //if cell is dead and there is exactly 3 neighbours, the cell comes back to life due to reproduction
+        //cell remains the same if no other rules apply.
+        
         if(board[y][x] == 1){
-            //if there are less than 2 cells, dies of underpopulation
             if(totalNeighbors<2){
                 temp[y][x] = 0;
             }
-            //if there between 2-3 neighbors, cell lives on to the next generation
             if(totalNeighbors>=2 && totalNeighbors<=3){
                 temp[y][x] = 1;
             }
-            //if there are more than 3 cells, cell dies of overpopulation
             if(totalNeighbors>3){
                 temp[y][x] = 0;
             }
         }else if(board[y][x] == 0){
-            //if cell is dead
-            //if there are exactly 3 cells, cell comes back to life from repopulation
             if(totalNeighbors == 3){
                 temp[y][x] = 1;
             }
         }else{
-            //cell remains the same if no other rules apply.
             temp[y][x] = board[y][x];
         }
     }

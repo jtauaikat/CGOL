@@ -1,4 +1,3 @@
-
 /**
  * Main game function for CGOL
  *
@@ -17,56 +16,39 @@ import java.lang.Object;
 //all imports needed
 public class MainGame
 {
-    //testing board with preset stable and oscillator to test CGOL rules
-    // public int board[][] = 
-    // {{1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
-    // {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-    // {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
-    // {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0},
-    // {1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0}};
-
     //creates generation counter with default of 5 if any errors occur
     int generationMax = 5;
     int generationCount = 0;
+    
     //x and y is used to apply CGOL rules for every cell on the board
     int y = 0;
     int x = 0;
+    
     //what the living and dead cells will look like on the console
     String livingCell = "█";
     String deadCell = "░";
+    
     //how many milliseconds between each generation
     int timeDelay = 1000;
+    
     //defines board and temp boards
     int[][] board;
     int[][] temp;
     boolean mainLoop = true;
+    
     //establishes randomness for random board generation
     Random rand = new Random();
+    
     //default size of the board is 20x20
     int size = 0;
-    //
+
+    //import keyboard scanner
     Scanner keyboard = new Scanner(System.in);
     String keyInput;
     
-    //
+    //define some booleans for loops for menu
     boolean boardPopulateLoop = true;
     boolean selectionScreen = false;
-    
     public MainGame(){
         //clears canvas
         System.out.print('\u000c');
@@ -74,6 +56,7 @@ public class MainGame
         menuInput();
         //repeats for set amount of generations
         while(mainLoop){
+            //separate loop for each generation
             while(generationCount<generationMax){
                 //clears canvas and temp board
                 System.out.print('\u000c');
@@ -83,35 +66,37 @@ public class MainGame
                 //applies changes to the real board
                 //this is done on a temp board in order to prevent any interference from changes from previous cells to change the states of other cells
                 board = temp;
-                //creates a delay of a set amount of milliseconds
+                //creates a delay of a set amount of milliseconds, uses try to prevent crashes
                 try{
                     TimeUnit.MILLISECONDS.sleep(timeDelay);
                 }catch(Exception e){
-
                 }
                 //repeats to next generation
                 generationCount++;
             }
+            //runs code to allow user to continue using software after the loop finishes
             endMenu();
         }
     }
     
     //method for menu input code
     void menuInput(){
-        System.out.println("Would you like to load a 𝐬𝐞𝐞𝐝, 𝐫𝐚𝐧𝐝𝐨𝐦 board or 𝐞𝐝𝐢𝐭 manually?");
+        System.out.println("Would you like to load a 𝘀𝗲𝗲𝗱, 𝗿𝗮𝗻𝗱𝗼𝗺 board or 𝗲𝗱𝗶𝘁 manually?");
+        
+        //creates loop to make the user provide valid answer
         boardPopulateLoop = true;
         while(boardPopulateLoop){
             keyInput = keyboard.nextLine().toLowerCase();
             switch(keyInput){
                 case "seed":
-                //runs txt file loader
+                //runs txt file loader methods
                 trySeedFile();
                 boardPopulateLoop = false;
-                seedPopulate();
+                printBoard();
                 break;
 
                 case "random":
-                //if user inputs anything else, runs random input code, allows user customization
+                //asks user for grid size then applies random population method
                 System.out.println("How big do you want the grid?");
                 keyInput = keyboard.nextLine().toLowerCase();
                 size = removeChar(keyInput);
@@ -120,9 +105,9 @@ public class MainGame
                 randomPopulate();
                 boardPopulateLoop = false;
                 break;
-
+                
                 case "edit":
-                //if user inputs anything else, runs random input code, allows user customization
+                //asks user for grid size then applies the manual population method loop
                 System.out.println("How big do you want the grid?");
                 keyInput = keyboard.nextLine().toLowerCase();
                 size = removeChar(keyInput);
@@ -135,23 +120,25 @@ public class MainGame
                 break;
 
                 default:
-                //spits out invalid input code
+                //outputs the invalid input method
                 System.out.println("invalid command. please enter \'seed\', \'random\' or \'edit\'.");
                 break;
             }
         }
-        //loop for manually editing the board
+        //takes key input and accounts for user error, removing any characters other than numbers
         System.out.println("How many generations?");
         keyInput = keyboard.nextLine();
         generationMax = removeChar(keyInput);
-
+        
+        //takes key input and accounts for user error, removing any characters other than numbers
         System.out.println("How many milliseconds between each generation?");
         keyInput = keyboard.nextLine();
         timeDelay = removeChar(keyInput);
         
+        
         System.out.println("Would you like to use custom characters?");
         keyInput = keyboard.nextLine().toLowerCase();
-        
+        //if user inputs yes, allows user to change livingCell and deadCell
         if(keyInput.equals("yes")){
             System.out.println("What character for living cells?");
             livingCell = keyboard.nextLine();
@@ -161,6 +148,7 @@ public class MainGame
         }
     }
     
+    //method for user to change cells in console
     void manualEdit(){
         while (selectionScreen == true){
             //allows user to input x and y coordinates for the cell you want to replace
@@ -197,29 +185,34 @@ public class MainGame
         }
     }
 
+    //code for menu after running all generations
     void endMenu(){
         if(generationCount >= generationMax){
             System.out.println("Would you like to quit, continue, or restart the simulation?");
             String keyInput = keyboard.nextLine().toLowerCase();
             if(keyInput.equalsIgnoreCase("quit")){
+                //if user inputs quit, ends whole game loop
                 mainLoop = false;
                 return;
             }else if(keyInput.equalsIgnoreCase("continue")){
-                System.out.println("How many generations?(max 2147483647)");
+                //if user inputs continue, asks for generations, restarts generation counter and restarts generation loop
+                System.out.println("How many generations?");
                 keyInput = keyboard.nextLine();
                 generationMax = removeChar(keyInput);
                 generationCount = 0;
             }else if(keyInput.equalsIgnoreCase("restart")){
+                //starts the menuInput code, resets generations and clears board
                 generationCount = 0;
                 System.out.print('\u000c');
                 menuInput();
             }else{
+                //sends default text
                 System.out.println("I do not understand that command. Enter \"continue\", \"quit\" or \"restart\".");
             }
         }
     }
-    //method that applies the game rules to every cell
     
+    //method that applies the game rules to every cell
     void checkCells(){
         //goes along y axis, checks all cells
         for(y = 0; y<size; y++){
@@ -237,11 +230,11 @@ public class MainGame
 
             }
             //creates new line
-
             System.out.println();
 
         }
     }
+    
     //method for loading in .txt file
     void trySeedFile(){
         //defines file
@@ -262,8 +255,6 @@ public class MainGame
                     //takes the unicode character for "0" and subtracts the numerical value of the cell selected. if subtracted from itself, it gives 0, and if subtracted from "1", gives 1.
                     board[seedY][seedX]=fileString.charAt(seedX)-'0';
                 }
-                //reads next line
-                
             }
         }
         catch (IOException e){
@@ -278,7 +269,9 @@ public class MainGame
             }
         }
     }
-    void seedPopulate(){
+    
+    //method that prints out entire board
+    void printBoard(){
         for(int yModifier= 0; yModifier<size; yModifier++){
                     for(int xModifier = 0; xModifier<size; xModifier++){
                         System.out.print(board[yModifier][xModifier] + " ");
@@ -286,6 +279,8 @@ public class MainGame
                     System.out.println();
                 }
     }
+    
+    //populates entire board with 0s and then prints with labelled left side
     void manualPopulate(){
         for(int yModifier= 0; yModifier<size; yModifier++){
             for(int xModifier = 0; xModifier<size; xModifier++){
@@ -300,22 +295,27 @@ public class MainGame
             System.out.println();
         }
     }
+    
     //method that ensures code will not crash if user accidentally inputs a value that is not a number
     int removeChar(String stringInput){
         //removes all values that aren't between 0-9
         String numberOnly = stringInput.replaceAll("[^0-9]","");
         if(numberOnly.equals("")){
-            //if value is invalid/lesser than 0, returns safe number of 20
+            //if there were no valid integers within the string, returns 20 as default safe number
             System.out.println("Invalid input. setting to default of 20.");
             return 20;
         }
+        //turns new clean string into an integer
         int numberValue = Integer.parseInt(numberOnly);
         if(numberValue == 0 || numberValue >= 2147483647){
+            //if value is invalid (larger than the largest integer stored in an int variable)/lesser than 0, returns safe number of 20
             System.out.println("not an acceptable integer. Returning 20.");
             return 20;
         }
+        //otherwise, returns valid value
         return numberValue;
     }
+    
     //method that checks every cell surrounding a cell, adds them to a total.
     void gameRules(){
         int totalNeighbors = 0;

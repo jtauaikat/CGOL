@@ -1,8 +1,9 @@
 /**
- * Main game function for CGOL
+ * Main game function for CGOL, finished & commented.
  *
- * Joshua Toumu'a
- * 26/07/22
+ * Creator: Joshua Toumu'a
+ * Date: 16/08/22
+ * 
  */
 import java.util.Random;
 import java.util.Arrays;
@@ -47,7 +48,7 @@ public class MainGame
     String keyInput;
     
     //define some booleans for loops for menu
-    boolean boardPopulateLoop = true;
+    boolean menuLoop = true;
     boolean selectionScreen = false;
     public MainGame(){
         //clears canvas
@@ -84,14 +85,15 @@ public class MainGame
         System.out.println("Would you like to load a 𝘀𝗲𝗲𝗱, 𝗿𝗮𝗻𝗱𝗼𝗺 board or 𝗲𝗱𝗶𝘁 manually?");
         
         //creates loop to make the user provide valid answer
-        boardPopulateLoop = true;
-        while(boardPopulateLoop){
+        menuLoop = true;
+        while(menuLoop){
             keyInput = keyboard.nextLine().toLowerCase();
             switch(keyInput){
                 case "seed":
                 //runs txt file loader methods
                 trySeedFile();
-                boardPopulateLoop = false;
+                //ends loop and prints out the board
+                menuLoop = false;
                 printBoard();
                 break;
 
@@ -100,10 +102,12 @@ public class MainGame
                 System.out.println("How big do you want the grid?");
                 keyInput = keyboard.nextLine().toLowerCase();
                 size = removeChar(keyInput);
+                //takes key input and changes board size accordingly
                 board = new int[size][size];
                 temp = new int[size][size];
+                //runs method to randomly populate, ends the loop
                 randomPopulate();
-                boardPopulateLoop = false;
+                menuLoop = false;
                 break;
                 
                 case "edit":
@@ -114,7 +118,7 @@ public class MainGame
                 board = new int[size][size];
                 temp = new int[size][size];
                 manualPopulate();
-                boardPopulateLoop = false;
+                menuLoop = false;
                 selectionScreen = true;
                 manualEdit();
                 break;
@@ -177,7 +181,7 @@ public class MainGame
             }
             System.out.println();
             System.out.println("would you like to stop editing cells?");
-
+            //if user answers "yes", ends loop
             keyInput = keyboard.nextLine();
             if(keyInput.equals("yes")){
                 selectionScreen=false;
@@ -245,10 +249,12 @@ public class MainGame
             //code that takes the 20x20 grid in character by character and places into array
             boolean firstLineLoop = true;
             
+            //code to set board sizes
             board = new int[size][size];
             temp = new int[size][size];
             for (int seedY = 0; seedY<size-1; seedY++){
-                String fileString  = fileReader.nextLine();
+                //takes keyinput
+                String fileString = fileReader.nextLine();
                 for (int seedX = 0; seedX<size; seedX++){
                     //board[seedY][seedX] = Integer.parseInt(""+fileString.charAt(seedX));
 
@@ -308,7 +314,7 @@ public class MainGame
         //turns new clean string into an integer
         int numberValue = Integer.parseInt(numberOnly);
         if(numberValue == 0 || numberValue >= 2147483647){
-            //if value is invalid (larger than the largest integer stored in an int variable)/lesser than 0, returns safe number of 20
+            //if value is invalid (larger than the largest integer stored in an int variable, (>=2147483647))/ <0, returns safe number of 20
             System.out.println("not an acceptable integer. Returning 20.");
             return 20;
         }

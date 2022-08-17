@@ -2,7 +2,8 @@
  * Main game function for CGOL, finished & commented.
  *
  * Creator: Joshua Toumu'a
- * Date: 16/08/22
+ * Date: 17/08/22
+ * Version: 27
  * 
  */
 import java.util.Random;
@@ -82,12 +83,15 @@ public class MainGame
     
     //method for menu input code
     void menuInput(){
+        System.out.println("Conway's Game Of Life Simulator");
+        System.out.println("to populate the board, would you like to:");
         System.out.println("Would you like to load a 𝘀𝗲𝗲𝗱, 𝗿𝗮𝗻𝗱𝗼𝗺 board or 𝗲𝗱𝗶𝘁 manually?");
         
         //creates loop to make the user provide valid answer
         menuLoop = true;
         while(menuLoop){
             keyInput = keyboard.nextLine().toLowerCase();
+            System.out.print('\u000c');
             switch(keyInput){
                 case "seed":
                 //runs txt file loader methods
@@ -126,24 +130,30 @@ public class MainGame
                 default:
                 //outputs the invalid input method
                 System.out.println("invalid command. please enter \'seed\', \'random\' or \'edit\'.");
+                System.out.println();
+                System.out.println("to populate the board, would you like to:");
+                System.out.println("Would you like to load a 𝘀𝗲𝗲𝗱, 𝗿𝗮𝗻𝗱𝗼𝗺 board or 𝗲𝗱𝗶𝘁 manually?");
                 break;
             }
         }
         //takes key input and accounts for user error, removing any characters other than numbers
         System.out.println("How many generations?");
         keyInput = keyboard.nextLine();
+        System.out.print('\u000c');
         generationMax = removeChar(keyInput);
         
         //takes key input and accounts for user error, removing any characters other than numbers
         System.out.println("How many milliseconds between each generation?");
         keyInput = keyboard.nextLine();
+        System.out.print('\u000c');
         timeDelay = removeChar(keyInput);
         
         
         System.out.println("Would you like to use custom characters?");
         keyInput = keyboard.nextLine().toLowerCase();
+        System.out.print('\u000c');
         //if user inputs yes, allows user to change livingCell and deadCell
-        if(keyInput.equals("yes")){
+        if(keyInput.equals("yes")||keyInput.equals("y")){
             System.out.println("What character for living cells?");
             livingCell = keyboard.nextLine();
 
@@ -186,6 +196,7 @@ public class MainGame
             if(keyInput.equals("yes")){
                 selectionScreen=false;
             }
+            System.out.print('\u000c');
         }
     }
 
